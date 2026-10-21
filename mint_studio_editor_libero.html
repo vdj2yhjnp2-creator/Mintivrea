@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mint Studio — Editor del sito</title>
+<style>
+:root{--ink:#20251f;--muted:#747a72;--line:#e5e8e2;--paper:#f6f7f4;--panel:#fff;--accent:#244c3b;--accent2:#d7e7a4}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.topbar{height:64px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;gap:12px;position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.04em}.mark{height:34px;width:34px;border-radius:10px;background:var(--accent);color:white;display:grid;place-items:center;font-family:Georgia,serif;font-size:21px}
+.top-actions{display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);background:white;border-radius:10px;padding:10px 13px;font-size:13px;font-weight:650;color:var(--ink)}.btn:hover{background:#f5f7f3}.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn.small{padding:7px 9px;font-size:12px}
+.layout{display:grid;grid-template-columns:290px minmax(300px,1fr);min-height:calc(100vh - 64px)}
+.sidebar{background:#fff;padding:18px;border-right:1px solid var(--line);min-width:0}.sidebar.right{display:none}
+.eyebrow{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:5px 0 13px}
+.section{padding-bottom:19px;margin-bottom:18px;border-bottom:1px solid var(--line)}.section:last-child{border-bottom:0}
+.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool{border:1px solid var(--line);border-radius:12px;padding:13px 9px;text-align:left;background:#fff;display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:650}.tool span{font-size:20px}.tool:hover{border-color:#8ba28d;background:#f8faf6}
+.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}.field label{font-size:12px;color:#5c635b;font-weight:650}.field input[type=text],.field input[type=url],.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field textarea:focus,.field select:focus{border-color:#7d9c83}.field input[type=color]{width:100%;height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:3px}.field input[type=range]{width:100%;accent-color:var(--accent)}.field textarea{resize:vertical;min-height:68px}
+.colorrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hint{font-size:11px;color:var(--muted);line-height:1.5}.workspace{padding:25px;min-width:0;overflow:auto;background:#edf0eb}.workspace-head{max-width:980px;margin:0 auto 15px;display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:12px}.device{display:flex;gap:5px}.device button{border:1px solid #d9ded6;background:#fff;border-radius:8px;padding:7px 9px;font-size:12px}.device button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.canvas-wrap{margin:auto;width:100%;max-width:980px;box-shadow:0 10px 35px #1c2b1e12;background:#fff;transition:max-width .2s}.canvas-wrap.mobile{max-width:390px}.canvas{min-height:650px;position:relative;overflow:hidden;background:#f5f1e8}
+.site-nav{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 6%;background:#203e31;color:#fff}.site-logo{font-family:Georgia,serif;font-size:28px;letter-spacing:.12em}.navlinks{display:flex;gap:22px;font-size:11px;letter-spacing:.1em;text-transform:uppercase}.navlinks a{color:inherit;text-decoration:none}
+.hero{min-height:390px;display:grid;grid-template-columns:1fr 1fr;align-items:center;background:#f5f1e8}.hero-copy{padding:44px 10%}.kicker{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#60715f;font-weight:800}.hero h1{font-family:Georgia,serif;font-size:clamp(35px,5vw,63px);font-weight:400;line-height:1.03;margin:18px 0}.hero p{font-size:14px;line-height:1.8;color:#555e53;max-width:370px}.hero-cta{display:inline-block;margin-top:14px;padding:13px 19px;background:#244c3b;color:#fff;text-decoration:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.hero-image{height:100%;min-height:390px;background:#d9dfd1;position:relative;display:grid;place-items:center;overflow:hidden}.hero-image img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}.image-placeholder{font-family:Georgia,serif;color:#667765;text-align:center;padding:25px}.image-placeholder strong{display:block;font-size:34px;font-weight:400;margin-bottom:8px}
+.section-title{text-align:center;padding:54px 20px 28px}.section-title small{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#61725f}.section-title h2{font-family:Georgia,serif;font-size:36px;font-weight:400;margin:10px 0}
+.drinks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 6% 54px}.drink{background:#fff;padding:12px}.drink-img{height:125px;background:#e1e6dc;display:grid;place-items:center;color:#6b7967;font-size:12px;overflow:hidden}.drink-img img{width:100%;height:100%;object-fit:cover}.drink h3{font-family:Georgia,serif;font-weight:400;font-size:20px;margin:14px 0 5px}.drink p{font-size:11px;line-height:1.6;color:#666;margin:0}.about{background:#244c3b;color:#fff;padding:45px 10%;text-align:center}.about h2{font-family:Georgia,serif;font-size:34px;font-weight:400;margin:8px}.about p{max-width:620px;margin:12px auto 0;line-height:1.8;font-size:13px;color:#e1e8df}.footer{background:#172d24;color:#dce4db;padding:24px 6%;display:flex;justify-content:space-between;gap:15px;font-size:11px}
+.canvas [data-editable]{outline:0;cursor:pointer}.canvas [data-editable]:hover{outline:1px dashed #86a08b;outline-offset:3px}.canvas [data-selected="true"]{outline:2px solid #8baa82!important;outline-offset:3px}.selection-empty{font-size:13px;color:var(--muted);line-height:1.6;background:#f8f9f6;border:1px dashed #d8ded5;padding:14px;border-radius:10px}
+.status{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.5}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#203e31;color:#fff;padding:11px 16px;border-radius:10px;font-size:12px;box-shadow:0 6px 24px #0002;z-index:99;display:none}
+@media(max-width:1000px){.layout{grid-template-columns:245px minmax(280px,1fr)}.workspace{padding:16px}}
+@media(max-width:680px){.topbar{height:auto;min-height:60px;flex-wrap:wrap;padding:10px}.brand{font-size:13px}.top-actions{flex-wrap:wrap}.layout{display:flex;flex-direction:column}.sidebar{border-right:0;border-bottom:1px solid var(--line)}.workspace{padding:12px;order:2}.sidebar.right{display:none}.toolgrid{grid-template-columns:repeat(4,1fr)}.tool{padding:9px 5px;text-align:center;align-items:center}.tool span{font-size:18px}.hero{grid-template-columns:1fr}.hero-copy{padding:38px 8%}.hero-image{min-height:250px;grid-row:1}.hero h1{font-size:44px}.navlinks{gap:8px;font-size:9px}.site-nav{padding:0 5%;height:65px}.site-logo{font-size:23px}.drinks{grid-template-columns:1fr;padding:0 7% 35px}.drink-img{height:190px}.footer{flex-direction:column}.workspace-head{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="mark">M</div><div>Mint Studio <span style="font-weight:400;color:#8b9188">/ Editor del sito</span></div></div>
+  <div class="top-actions">
+    <button class="btn" id="saveProject">Salva progetto</button>
+    <button class="btn" id="loadProject">Apri progetto</button>
+    <button class="btn primary" id="exportSite">Esporta sito HTML</button>
+  </div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="section">
+      <div class="eyebrow">Aggiungi elementi</div>
+      <div class="toolgrid">
+        <button class="tool" id="addText"><span>Ｔ</span>Testo</button>
+        <button class="tool" id="addImage"><span>▧</span>Immagine</button>
+        <button class="tool" id="addSection"><span>▤</span>Sezione</button>
+        <button class="tool" id="addButton"><span>↗</span>Pulsante</button>
+      </div>
+      <input id="imageUpload" type="file" accept="image/*" hidden>
+      <input id="projectUpload" type="file" accept=".json,application/json" hidden>
+      <p class="hint">Clicca un elemento per modificarlo. Trascinalo nell’anteprima per posizionarlo liberamente. Puoi caricare PNG, JPG, WebP e altre immagini.</p>
+    </div>
+    <div class="section">
+      <div class="eyebrow">Aspetto pagina</div>
+      <div class="field"><label for="pageBg">Colore di sfondo pagina</label><input type="color" id="pageBg" value="#f5f1e8"></div>
+      <div class="colorrow">
+        <div class="field"><label for="accentColor">Colore principale</label><input type="color" id="accentColor" value="#244c3b"></div>
+        <div class="field"><label for="textColor">Colore testo</label><input type="color" id="textColor" value="#20251f"></div>
+      </div>
+      <div class="field"><label for="siteTitle">Nome / logo testuale</label><input type="text" id="siteTitle" value="MINT"></div>
+      <div class="field"><label for="fontChoice">Carattere titoli</label><select id="fontChoice"><option value="Georgia,serif">Elegante — Georgia</option><option value="Arial,sans-serif">Moderno — Arial</option><option value="'Trebuchet MS',sans-serif">Pulito — Trebuchet</option><option value="'Times New Roman',serif">Classico — Times</option></select></div>
+    </div>
+    <div class="section">
+      <div class="eyebrow">Vista</div>
+      <div class="toolgrid">
+        <button class="tool" id="desktopView"><span>▱</span>Desktop</button>
+        <button class="tool" id="mobileView"><span>▯</span>Telefono</button>
+      </div>
+      <p class="hint">L'anteprima si adatta allo schermo. L'HTML esportato sarà responsive.</p>
+    </div>
+    <div class="section" id="leftElementEditor"><div class="eyebrow">Modifica elemento selezionato</div>
+    <div id="emptySelection" class="selection-empty">Seleziona una scritta, un'immagine o una sezione nell'anteprima per modificarla qui.</div>
+    <div id="editorControls" style="display:none">
+      <div class="field"><label for="elementText">Testo</label><textarea id="elementText" rows="3" placeholder="Scrivi qui..."></textarea></div>
+      <div class="field"><label for="elementColor">Colore elemento / testo</label><input type="color" id="elementColor" value="#244c3b"></div>
+      <div class="field"><label for="elementBg">Colore di sfondo elemento</label><input type="color" id="elementBg" value="#f5f1e8"></div>
+      <div class="field"><label for="elementSize">Dimensione testo</label><input type="range" id="elementSize" min="9" max="90" value="20"><div class="hint"><span id="sizeValue">20</span> px</div></div>
+      <div class="field"><label for="elementFont">Carattere</label><select id="elementFont"><option value="">Predefinito</option><option value="Georgia,serif">Georgia</option><option value="Arial,sans-serif">Arial</option><option value="'Trebuchet MS',sans-serif">Trebuchet</option><option value="'Times New Roman',serif">Times New Roman</option></select></div>
+      <div class="field"><label for="elementAlign">Allineamento testo</label><select id="elementAlign"><option value="">Predefinito</option><option value="left">Sinistra</option><option value="center">Centro</option><option value="right">Destra</option></select></div>
+      <div class="field" id="imageTools" style="display:none"><label>Immagine selezionata</label><button class="btn" id="replaceImage">Carica / sostituisci immagine</button><div class="field"><label for="imageFit">Adattamento immagine</label><select id="imageFit"><option value="cover">Riempi il riquadro</option><option value="contain">Mostra tutta l'immagine</option></select></div></div>
+      <div class="field"><label for="elementLink">Link (facoltativo)</label><input type="url" id="elementLink" placeholder="https://..."></div>
+      <div class="toolgrid"><button class="btn small" id="duplicateElement">Duplica</button><button class="btn small" id="deleteElement">Elimina</button></div>
+      <p class="status">Suggerimento: per aggiungere una foto clicca “Immagine” e scegli un file dal computer. L'immagine viene incorporata nel progetto.</p>
+    </div></div>
+  </aside>
+
+  <main class="workspace">
+    <div class="workspace-head"><span>ANTEPRIMA DEL SITO · Clicca i contenuti per selezionarli</span><div class="device"><button class="active" id="viewDesk">Desktop</button><button id="viewMob">Mobile</button></div></div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <div class="canvas" id="canvas">
+        <nav class="site-nav" data-block="nav">
+          <div class="site-logo" data-editable data-kind="logo">MINT</div>
+          <div class="navlinks"><a href="#cocktail" data-editable data-kind="navlink">Cocktail</a><a href="#about" data-editable data-kind="navlink">Il locale</a><a href="#contatti" data-editable data-kind="navlink">Contatti</a></div>
+        </nav>
+        <section class="hero" data-block="hero">
+          <div class="hero-copy">
+            <div class="kicker" data-editable data-kind="text">COCKTAIL · ATMOSFERA · ESPERIENZE</div>
+            <h1 data-editable data-kind="heading">Non è solo un drink.<br>È un momento.</h1>
+            <p data-editable data-kind="text">Nel cuore di Ivrea, un luogo in cui gusto, atmosfera e stile si incontrano. Scopri il mondo Mint.</p>
+            <a class="hero-cta" href="#cocktail" data-editable data-kind="button">Scopri il Mint</a>
+          </div>
+          <div class="hero-image" data-editable data-kind="image">
+            <div class="image-placeholder"><strong>Mint Lounge</strong>La tua immagine principale</div>
+          </div>
+        </section>
+        <section data-block="cocktails" id="cocktail">
+          <div class="section-title"><small data-editable data-kind="text">LA NOSTRA SELEZIONE</small><h2 data-editable data-kind="heading">Cocktail & momenti</h2></div>
+          <div class="drinks">
+            <article class="drink"><div class="drink-img" data-editable data-kind="image">Immagine cocktail 01</div><h3 data-editable data-kind="heading">Signature</h3><p data-editable data-kind="text">Creazioni originali, equilibrio e personalità.</p></article>
+            <article class="drink"><div class="drink-img" data-editable data-kind="image">Immagine cocktail 02</div><h3 data-editable data-kind="heading">Grandi classici</h3><p data-editable data-kind="text">I cocktail intramontabili, preparati con cura.</p></article>
+            <article class="drink"><div class="drink-img" data-editable data-kind="image">Immagine cocktail 03</div><h3 data-editable data-kind="heading">Zero alcol</h3><p data-editable data-kind="text">Nuove combinazioni, tutto il gusto del momento.</p></article>
+          </div>
+        </section>
+        <section class="about" data-block="about" id="about"><div class="kicker" data-editable data-kind="text" style="color:#d7e7a4">BENVENUTI AL MINT</div><h2 data-editable data-kind="heading">Il tuo spazio, il tuo momento.</h2><p data-editable data-kind="text">Un ambiente contemporaneo, pensato per un aperitivo, una serata in compagnia o un'occasione speciale. Lasciati accompagnare dal gusto e dall'atmosfera.</p></section>
+        <footer class="footer" data-block="footer" id="contatti"><span data-editable data-kind="text">MINT LOUNGE · IVREA</span><span data-editable data-kind="text">Instagram · Contatti · Orari</span></footer>
+      </div>
+    </div>
+  </main>
+
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const canvas=$('canvas'), wrap=$('canvasWrap');
+let selected=null, pendingImageTarget=null, objectUrls=[]; let dragState=null;
+const defaults={pageBg:'#f5f1e8',accent:'#244c3b',text:'#20251f'};
+function toast(msg){const t=$('toast');t.textContent=msg;t.style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.style.display='none',2400)}
+function setSelected(el){if(selected)selected.removeAttribute('data-selected');selected=el;if(selected){selected.setAttribute('data-selected','true');$('emptySelection').style.display='none';$('editorControls').style.display='block';populateControls()}else{$('emptySelection').style.display='block';$('editorControls').style.display='none'}}
+function isImage(el){return el && (el.dataset.kind==='image'||el.classList.contains('hero-image')||el.classList.contains('drink-img'))}
+function currentImage(el){return el?.querySelector('img')}
+function populateControls(){
+ if(!selected)return;
+ const kind=selected.dataset.kind||'section';
+ $('elementText').value=isImage(selected)?(selected.dataset.alt||''):selected.innerText;
+ $('elementColor').value=rgbToHex(getComputedStyle(selected).color)||'#244c3b';
+ $('elementBg').value=rgbToHex(getComputedStyle(selected).backgroundColor)||'#f5f1e8';
+ $('elementSize').value=parseInt(getComputedStyle(selected).fontSize)||20;$('sizeValue').textContent=$('elementSize').value;
+ $('elementFont').value=selected.style.fontFamily||'';
+ $('elementAlign').value=selected.style.textAlign||'';
+ $('elementLink').value=selected.tagName==='A'?(selected.getAttribute('href')||''):(selected.dataset.link||'');
+ $('imageTools').style.display=isImage(selected)?'block':'none';
+ if(isImage(selected))$('imageFit').value=currentImage(selected)?.style.objectFit||'cover';
+}
+function rgbToHex(rgb){if(!rgb||rgb==='transparent')return null;if(rgb.startsWith('#'))return rgb;const m=rgb.match(/\d+/g);if(!m||m.length<3)return null;return '#'+m.slice(0,3).map(x=>(+x).toString(16).padStart(2,'0')).join('')}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+canvas.addEventListener('pointerdown',e=>{
+ const el=e.target.closest('[data-editable]');
+ if(!el || !canvas.contains(el) || e.button!==0) return;
+ e.preventDefault(); setSelected(el);
+ const baseX=parseFloat(el.dataset.moveX||'0'), baseY=parseFloat(el.dataset.moveY||'0');
+ dragState={el,startX:e.clientX,startY:e.clientY,baseX,baseY,moved:false};
+});
+canvas.addEventListener('pointermove',e=>{
+ if(!dragState)return;
+ const dx=e.clientX-dragState.startX, dy=e.clientY-dragState.startY;
+ if(Math.abs(dx)+Math.abs(dy)>3)dragState.moved=true;
+ if(!dragState.moved)return;
+ const x=dragState.baseX+dx, y=dragState.baseY+dy;
+ dragState.el.dataset.moveX=x; dragState.el.dataset.moveY=y;
+ dragState.el.style.transform=`translate(${x}px, ${y}px)`;
+ dragState.el.style.position=dragState.el.style.position||'relative';
+ dragState.el.style.zIndex='5';
+});
+canvas.addEventListener('pointerup',()=>{if(dragState?.moved)toast('Posizione aggiornata');dragState=null});
+canvas.addEventListener('pointercancel',()=>{dragState=null});
+canvas.addEventListener('click',e=>{const el=e.target.closest('[data-editable], [data-block]');if(el&&canvas.contains(el)){e.preventDefault();setSelected(el)}});
+$('elementText').addEventListener('input',()=>{if(!selected)return;if(isImage(selected)){selected.dataset.alt=$('elementText').value;const img=currentImage(selected);if(img)img.alt=$('elementText').value}else selected.innerText=$('elementText').value;});
+$('elementColor').addEventListener('input',()=>{if(selected)selected.style.color=$('elementColor').value});
+$('elementBg').addEventListener('input',()=>{if(selected)selected.style.backgroundColor=$('elementBg').value});
+$('elementSize').addEventListener('input',()=>{if(selected){selected.style.fontSize=$('elementSize').value+'px';$('sizeValue').textContent=$('elementSize').value}});
+$('elementFont').addEventListener('change',()=>{if(selected)selected.style.fontFamily=$('elementFont').value});
+$('elementAlign').addEventListener('change',()=>{if(selected)selected.style.textAlign=$('elementAlign').value});
+$('elementLink').addEventListener('input',()=>{if(!selected)return;if(selected.tagName==='A')selected.href=$('elementLink').value||'#';else selected.dataset.link=$('elementLink').value});
+$('imageFit').addEventListener('change',()=>{const img=currentImage(selected);if(img)img.style.objectFit=$('imageFit').value});
+function applyGlobal(){canvas.style.background=$('pageBg').value;canvas.querySelectorAll('.hero,.section-title').forEach(el=>{if(!el.dataset.customBg)el.style.backgroundColor=$('pageBg').value});canvas.querySelectorAll('.site-nav,.about').forEach(el=>{if(!el.dataset.customBg)el.style.backgroundColor=$('accentColor').value});canvas.querySelectorAll('.site-logo').forEach(el=>el.textContent=$('siteTitle').value);canvas.querySelectorAll('.site-logo,.hero h1,.section-title h2,.drink h3,.about h2').forEach(el=>el.style.fontFamily=$('fontChoice').value);canvas.querySelectorAll('.hero-cta').forEach(el=>el.style.backgroundColor=$('accentColor').value);canvas.style.color=$('textColor').value}
+['pageBg','accentColor','textColor','siteTitle','fontChoice'].forEach(id=>$(id).addEventListener(id==='siteTitle'?'input':'change',applyGlobal));
+function addEditable(tag,text,kind){const el=document.createElement(tag);el.dataset.editable='';el.dataset.kind=kind;el.textContent=text;el.style.padding='12px';el.style.margin='10px';el.style.backgroundColor='#ffffff';el.style.color='#244c3b';el.style.fontSize=kind==='heading'?'28px':'16px';el.style.fontFamily=kind==='heading'?'Georgia,serif':'Arial,sans-serif';canvas.appendChild(el);setSelected(el);return el}
+$('addText').onclick=()=>addEditable('p','Scrivi qui il tuo testo','text');
+$('addButton').onclick=()=>{const a=addEditable('a','Scopri di più','button');a.href='#';a.style.display='inline-block';a.style.background='#244c3b';a.style.color='#fff';a.style.padding='12px 18px';a.style.textDecoration='none';a.style.borderRadius='4px'};
+$('addSection').onclick=()=>{const s=document.createElement('section');s.dataset.block='custom';s.dataset.editable='';s.dataset.kind='section';s.style.cssText='padding:38px 24px;margin:10px 0;background:#e8eee4;color:#244c3b;min-height:100px';s.textContent='Nuova sezione — clicca per modificarla';canvas.appendChild(s);setSelected(s)};
+$('addImage').onclick=()=>{pendingImageTarget=null;$('imageUpload').click()};
+$('replaceImage').onclick=()=>{pendingImageTarget=selected;$('imageUpload').click()};
+$('imageUpload').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;const data=await fileToDataURL(file);let target=pendingImageTarget;if(!target){target=document.createElement('div');target.dataset.editable='';target.dataset.kind='image';target.style.cssText='margin:12px;padding:8px;min-height:130px;display:grid;place-items:center;background:#e4e9df';canvas.appendChild(target)}target.dataset.kind='image';target.dataset.alt=file.name;target.innerHTML='';const img=document.createElement('img');img.src=data;img.alt=file.name;img.style.cssText='display:block;width:100%;height:100%;max-height:420px;object-fit:cover';target.appendChild(img);if(target.classList.contains('hero-image')){target.style.minHeight='390px';img.style.position='absolute';img.style.inset='0';img.style.height='100%'}if(target.classList.contains('drink-img')){img.style.height='100%';img.style.minHeight='125px'}setSelected(target);e.target.value='';toast('Immagine aggiunta al progetto')});
+function fileToDataURL(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+$('duplicateElement').onclick=()=>{if(!selected)return;const clone=selected.cloneNode(true);clone.removeAttribute('data-selected');clone.style.margin=clone.style.margin||'10px';selected.after(clone);setSelected(clone);toast('Elemento duplicato')};
+$('deleteElement').onclick=()=>{if(!selected)return;if(selected.dataset.block&&['nav','hero','cocktails','about','footer'].includes(selected.dataset.block)){toast('Per sicurezza, non puoi eliminare questa sezione base.');return}const old=selected;setSelected(null);old.remove();toast('Elemento eliminato')};
+function setView(mobile){wrap.classList.toggle('mobile',mobile);$('viewDesk').classList.toggle('active',!mobile);$('viewMob').classList.toggle('active',mobile);$('desktopView').classList.toggle('active',!mobile);$('mobileView').classList.toggle('active',mobile)}
+$('viewDesk').onclick=$('desktopView').onclick=()=>setView(false);$('viewMob').onclick=$('mobileView').onclick=()=>setView(true);
+function collectProject(){return {version:1,globals:{pageBg:$('pageBg').value,accentColor:$('accentColor').value,textColor:$('textColor').value,siteTitle:$('siteTitle').value,fontChoice:$('fontChoice').value},html:canvas.innerHTML,canvasStyle:canvas.getAttribute('style')||''}}
+function download(name,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+$('saveProject').onclick=()=>download('mint-progetto.json',JSON.stringify(collectProject(),null,2),'application/json');
+$('loadProject').onclick=()=>$('projectUpload').click();
+$('projectUpload').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());canvas.innerHTML=p.html;canvas.setAttribute('style',p.canvasStyle||'');if(p.globals){$('pageBg').value=p.globals.pageBg||defaults.pageBg;$('accentColor').value=p.globals.accentColor||defaults.accent;$('textColor').value=p.globals.textColor||defaults.text;$('siteTitle').value=p.globals.siteTitle||'MINT';$('fontChoice').value=p.globals.fontChoice||'Georgia,serif';applyGlobal()}setSelected(null);toast('Progetto caricato')}catch(err){toast('File progetto non valido')}e.target.value=''});
+function exportHTML(){
+ const clone=canvas.cloneNode(true);clone.querySelectorAll('[data-selected]').forEach(el=>el.removeAttribute('data-selected'));clone.querySelectorAll('[data-editable]').forEach(el=>{el.removeAttribute('data-editable');el.removeAttribute('data-kind');el.removeAttribute('data-alt');el.removeAttribute('data-link');el.style.outline='none';if(el.dataset.link&&el.tagName!=='A')el.setAttribute('onclick','if(this.dataset.link)location.href=this.dataset.link')});
+ clone.querySelectorAll('a').forEach(a=>{a.style.cursor='pointer';if(a.getAttribute('href')==='#')a.removeAttribute('href')});
+ const css=`*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:${$('textColor').value};}img{max-width:100%}.canvas{min-height:100vh;overflow:hidden;background:${$('pageBg').value}}.site-nav{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 6%;background:${$('accentColor').value};color:white}.site-logo{font-family:${$('fontChoice').value};font-size:28px;letter-spacing:.12em}.navlinks{display:flex;gap:22px;font-size:11px;letter-spacing:.1em;text-transform:uppercase}.navlinks a{color:inherit;text-decoration:none}.hero{min-height:390px;display:grid;grid-template-columns:1fr 1fr;align-items:center;background:${$('pageBg').value}}.hero-copy{padding:44px 10%}.kicker{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#60715f;font-weight:800}.hero h1{font-family:${$('fontChoice').value};font-size:clamp(35px,5vw,63px);font-weight:400;line-height:1.03;margin:18px 0}.hero p{font-size:14px;line-height:1.8;color:#555e53;max-width:370px}.hero-cta{display:inline-block;margin-top:14px;padding:13px 19px;background:${$('accentColor').value};color:#fff;text-decoration:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase}.hero-image{height:100%;min-height:390px;background:#d9dfd1;position:relative;display:grid;place-items:center;overflow:hidden}.hero-image img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}.image-placeholder{font-family:Georgia,serif;color:#667765;text-align:center;padding:25px}.image-placeholder strong{display:block;font-size:34px;font-weight:400;margin-bottom:8px}.section-title{text-align:center;padding:54px 20px 28px}.section-title small{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#61725f}.section-title h2{font-family:${$('fontChoice').value};font-size:36px;font-weight:400;margin:10px 0}.drinks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 6% 54px}.drink{background:#fff;padding:12px}.drink-img{height:125px;background:#e1e6dc;display:grid;place-items:center;color:#6b7967;font-size:12px;overflow:hidden}.drink-img img{width:100%;height:100%;object-fit:cover}.drink h3{font-family:${$('fontChoice').value};font-weight:400;font-size:20px;margin:14px 0 5px}.drink p{font-size:11px;line-height:1.6;color:#666;margin:0}.about{background:${$('accentColor').value};color:#fff;padding:45px 10%;text-align:center}.about h2{font-family:${$('fontChoice').value};font-size:34px;font-weight:400;margin:8px}.about p{max-width:620px;margin:12px auto 0;line-height:1.8;font-size:13px;color:#e1e8df}.footer{background:#172d24;color:#dce4db;padding:24px 6%;display:flex;justify-content:space-between;gap:15px;font-size:11px}@media(max-width:650px){.hero{grid-template-columns:1fr}.hero-image{min-height:250px;grid-row:1}.hero-copy{padding:35px 8%}.hero h1{font-size:42px}.navlinks{gap:8px;font-size:9px}.site-nav{padding:0 5%;height:65px}.site-logo{font-size:22px}.drinks{grid-template-columns:1fr;padding:0 7% 35px}.drink-img{height:190px}.footer{flex-direction:column}}`;
+ return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc($('siteTitle').value)} Lounge</title><meta name="description" content="Scopri il Mint Lounge a Ivrea: cocktail, atmosfera ed esperienze."><style>${css}</style></head><body><main class="canvas">${clone.innerHTML}</main></body></html>`;
+}
+$('exportSite').onclick=()=>{download('index.html',exportHTML(),'text/html;charset=utf-8');toast('Sito HTML esportato: carica index.html su GitHub Pages')};
+applyGlobal();
+})();
+</script>
+</body>
+</html>
